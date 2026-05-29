@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "tauri-experiments",
+  "version": "0.1.0",
+  "identifier": "com.tauri-experiments",
+  "build": {
+    "devUrl": "http://localhost:3001",
+    "beforeBuildCommand": "bun build:apps",
+    "frontendDist": "../apps/client/dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "main",
+        "width": 700,
+        "height": 65,
+        "maxWidth": 750,
+        "maxHeight": 450,
+        "minWidth": 750,
+        "minHeight": 65,
+        "transparent": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "decorations": true,
+        "alwaysOnTop": true,
+        "windowEffects": {
+          "effects": ["sidebar"],
+          "state": "active",
+          "radius": 26
+        }
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost asset: https://asset.localhost blob: data:; style-src 'unsafe-inline' 'self'; connect-src 'self' http://localhost:* ws://localhost:* ipc: http://ipc.localhost ipc: https://ipc.localhost;",
+      "dangerousDisableAssetCspModification": ["style-src"]
+    },
+    "macOSPrivateApi": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

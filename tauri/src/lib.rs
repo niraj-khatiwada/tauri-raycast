@@ -24,13 +24,15 @@ pub fn run() {
             commands::open_native_toast,
             commands::open_tray_popover,
             commands::close_tray_popover,
+            commands::focus_or_create_main_window,
+            commands::quit_app
         ])
         .setup(|app| {
-            // Tray
             let app_handle = app.handle().clone();
             let main_window = app_handle
                 .get_webview_window(domain::AppWindow::Main.as_str())
                 .expect("main window must exist");
+            macos::hide_traffic_light_buttons(&main_window);
 
             let tray_window_label = domain::AppWindow::Tray.as_str();
             let mut tray_url = main_window.url().expect("main window url must exist");
@@ -69,7 +71,6 @@ pub fn run() {
                 _ => {}
             });
 
-            macos::hide_traffic_light_buttons(&main_window);
             Ok(())
         })
         .run(tauri::generate_context!())

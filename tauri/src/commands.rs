@@ -142,3 +142,39 @@ pub fn close_tray_popover(app_handle: AppHandle) {
         }
     };
 }
+
+#[tauri::command]
+pub fn focus_or_create_main_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let main_label = domain::AppWindow::Main.as_str();
+
+    match app_handle.get_webview_window(main_label) {
+        Some(window) => {
+            println!("Main window exists");
+            window.unminimize().map_err(|e| e.to_string())?;
+            window.show().map_err(|e| e.to_string())?;
+            window.set_focus().map_err(|e| e.to_string())?;
+        }
+        None => {
+            let window_config = app_handle
+                .config()
+                .app
+                .windows
+                .iter()
+                .find(|w| w.label == main_label)
+                .cloned()
+                .unwrap_or_default();
+
+            let main_window = WebviewWindowBuilder::from_config(&app_handle, &window_config)
+                .map_err(|e| e.to_string())?
+                .build()
+                .map_err(|e| e.to_string())?;
+            macos::hide_traffic_light_buttons(&main_window);
+        }
+    }
+    Ok(())
+}
+
+#[tauri::command]
+pub fn quit_app(app_handle: AppHandle) {
+    app_handle.exit(0);
+}

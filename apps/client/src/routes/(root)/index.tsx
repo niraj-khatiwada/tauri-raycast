@@ -60,14 +60,6 @@ function App() {
     });
   };
 
-  const handleTrayPopoverOpen = () => {
-    invoke("open_tray_popover");
-  };
-
-  const handleTrayPopoverClose = () => {
-    invoke("close_tray_popover");
-  };
-
   return (
     <>
       <div className="h-screen w-screen flex flex-col items-center justify-center gap-2 overflow-y-auto text-white">
@@ -103,21 +95,6 @@ function App() {
             className="bg-blue-600 px-4 py-1 rounded-md text-xs w-fit"
           >
             Show Error Toast
-          </button>
-        </div>
-        <div className="w-full flex items-center justify-center gap-2 text-white text-xs">
-          <button
-            onClick={handleTrayPopoverOpen}
-            className="bg-blue-600 px-4 py-1 rounded-md text-xs w-fit"
-          >
-            Open Tray Popover
-          </button>
-
-          <button
-            onClick={handleTrayPopoverClose}
-            className="bg-blue-600 px-4 py-1 rounded-md text-xs w-fit"
-          >
-            Close Tray Popover
           </button>
         </div>
       </div>

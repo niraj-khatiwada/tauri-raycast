@@ -211,6 +211,11 @@ pub fn close_native_tooltip() {
 }
 
 #[tauri::command]
+pub fn trigger_trackpad_haptic(intensity: Option<f64>, sharpenss: Option<f64>) {
+    macos::trigger_trackpad_haptic(intensity, sharpenss);
+}
+
+#[tauri::command]
 pub fn open_native_toast(
     text: String,
     icon: Option<String>,

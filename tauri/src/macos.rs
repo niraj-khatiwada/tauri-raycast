@@ -158,3 +158,13 @@ pub fn move_window_as_panel(panel_id: &str, x: f64, y: f64) {
         move_window_as_panel_bridge(SRString::from(panel_id), x, y);
     }
 }
+
+#[cfg(target_os = "macos")]
+swift_rs::swift!(fn trigger_trackpad_haptic_bridge(intensity: f64, sharpness: f64));
+
+#[cfg(target_os = "macos")]
+pub fn trigger_trackpad_haptic(intensity: Option<f64>, sharpness: Option<f64>) {
+    unsafe {
+        trigger_trackpad_haptic_bridge(intensity.unwrap_or(0.85), sharpness.unwrap_or(1.0));
+    }
+}

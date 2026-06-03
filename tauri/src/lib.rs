@@ -46,6 +46,7 @@ pub fn run() {
             commands::open_native_popover,
             commands::open_native_tooltip,
             commands::close_native_tooltip,
+            commands::trigger_trackpad_haptic,
             commands::open_native_toast,
             commands::open_tray_popover,
             commands::close_tray_popover,

@@ -7,6 +7,8 @@ class TooltipManager {
 
     var activePanel: NSPanel?
     var activeController: TooltipViewController?
+    
+    private var windowFocusObserver: NSObjectProtocol?
 
     func show(text: String, keys: [String], minX: Double, minY: Double) {
         if let panel = activePanel, let controller = activeController {
@@ -18,6 +20,9 @@ class TooltipManager {
         guard
             let parentWindow = NSApplication.shared.keyWindow ?? NSApplication.shared.windows.first
         else { return }
+        
+        setupFocusObserver(for: parentWindow)
+
         let controller = TooltipViewController(text: text, keys: keys)
         let requiredSize = controller.view.fittingSize
 
@@ -37,7 +42,6 @@ class TooltipManager {
         panel.hasShadow = true
         panel.ignoresMouseEvents = true
         panel.contentViewController = controller
-        
 
         self.activePanel = panel
         self.activeController = controller
@@ -50,10 +54,11 @@ class TooltipManager {
             context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             panel.animator().alphaValue = 1.0
         }
-
     }
 
     func hide() {
+        removeFocusObserver()
+
         guard let panel = activePanel else { return }
 
         NSAnimationContext.runAnimationGroup(
@@ -72,6 +77,32 @@ class TooltipManager {
                 }
             })
     }
+
+    // MARK: - Window Focus Helpers
+
+    private func setupFocusObserver(for window: NSWindow) {
+        removeFocusObserver()
+        
+        windowFocusObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didResignKeyNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            Task { @MainActor in
+                self.hide()
+            }
+        }
+    }
+
+    private func removeFocusObserver() {
+        if let observer = windowFocusObserver {
+            NotificationCenter.default.removeObserver(observer)
+            windowFocusObserver = nil
+        }
+    }
+
+    // MARK: - Frame Calculations
 
     private func repositionPanel(_ panel: NSPanel, minX: Double, minY: Double) {
         guard

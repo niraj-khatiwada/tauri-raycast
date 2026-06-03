@@ -61,6 +61,8 @@ function App() {
       x: rect.left + rect.width / 2,
       y: rect.top - rect.height - 5 + titlebarHeight,
     });
+
+    invoke("trigger_trackpad_haptic");
   };
 
   const handleMouseLeave = () => {

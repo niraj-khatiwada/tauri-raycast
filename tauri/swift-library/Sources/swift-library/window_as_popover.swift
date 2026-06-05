@@ -8,7 +8,6 @@ struct WindowAsPopoverSendableWindowPointer: Sendable {
     }
 }
 
-
 @MainActor
 class WindowAsPopoverManager {
     static let shared = WindowAsPopoverManager()
@@ -21,8 +20,8 @@ class WindowAsPopoverManager {
     func show(sendablePtr: WindowAsPopoverSendableWindowPointer, x: Double, y: Double) {
         self.stopObservingGlobalEvents()
         if let oldAnchor = self.activeAnchorWindow {
-                oldAnchor.close()
-                self.activeAnchorWindow = nil
+            oldAnchor.close()
+            self.activeAnchorWindow = nil
         }
 
         let rawUnsafe = UnsafeMutableRawPointer(sendablePtr.rawPointer)
@@ -78,7 +77,7 @@ class WindowAsPopoverManager {
         self.activeAnchorWindow = anchorWindow
         self.isCleaningUp = false
 
-        window_as_popover_event(WindowAsPopoverEventType.Opened) // notify rust
+        window_as_popover_event(WindowAsPopoverEventType.Opened)  // notify rust
 
         NotificationCenter.default.addObserver(
             self,
@@ -119,8 +118,8 @@ class WindowAsPopoverManager {
         self.activePopover = nil
         self.activeAnchorWindow = nil
         isCleaningUp = false
-        
-        window_as_popover_event(WindowAsPopoverEventType.Closed) // notify rust
+
+        window_as_popover_event(WindowAsPopoverEventType.Closed)  // notify rust
     }
 
     func isPopoverOpened() -> Bool {

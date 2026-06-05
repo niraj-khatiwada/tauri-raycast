@@ -290,3 +290,13 @@ pub fn focus_or_create_main_window(app_handle: tauri::AppHandle) -> Result<(), S
 pub fn quit_app(app_handle: AppHandle) {
     app_handle.exit(0);
 }
+
+#[tauri::command]
+pub fn show_ai_glow_effect() {
+    macos_bridge::show_ai_glow_effect();
+}
+
+#[tauri::command]
+pub fn hide_ai_glow_effect() {
+    macos_bridge::hide_ai_glow_effect();
+}

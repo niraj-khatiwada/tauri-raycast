@@ -64,19 +64,17 @@ pub mod ffi {
         fn isWindowAsPopoverVisible() -> bool;
 
         // show any Tauri window as panel
-        fn showWindowAsPanel(
-            id: String,
-            windowRawPtr: *mut std::ffi::c_void,
-            x: f64,
-            y: f64,
-            showAIGlow: bool,
-        );
+        fn showWindowAsPanel(id: String, windowRawPtr: *mut std::ffi::c_void, x: f64, y: f64);
         fn closeWindowAsPanel(id: String);
         fn isWindowAsPanelVisible(id: String) -> bool;
         fn moveWindowAsPanel(id: String, x: f64, y: f64);
 
         // haptic
         fn triggerTrackpadHaptic(intensity: f64, sharpness: f64);
+
+        // apple intelligence flow effect using swiftui
+        fn showAIGlowEffect();
+        fn hideAIGlowEffect();
 
     }
 }
@@ -188,7 +186,7 @@ fn window_as_popover_event(event_type: ffi::WindowAsPopoverEventType) {
 pub fn show_window_as_panel(panel_id: &str, window: &WebviewWindow, x: f64, y: f64) {
     if let Ok(ns_window_ptr) = window.ns_window() {
         let raw_window_ptr = ns_window_ptr as *mut c_void;
-        ffi::showWindowAsPanel(panel_id.to_string(), raw_window_ptr, x, y, true);
+        ffi::showWindowAsPanel(panel_id.to_string(), raw_window_ptr, x, y);
     }
 }
 
@@ -235,4 +233,15 @@ fn window_as_panel_event(event_type: ffi::WindowAsPanelEventType) {
 #[cfg(target_os = "macos")]
 pub fn trigger_trackpad_haptic(intensity: Option<f64>, sharpness: Option<f64>) {
     ffi::triggerTrackpadHaptic(intensity.unwrap_or(0.85), sharpness.unwrap_or(1.0));
+}
+
+// apple intelligence glow effect
+#[cfg(target_os = "macos")]
+pub fn show_ai_glow_effect() {
+    ffi::showAIGlowEffect();
+}
+
+#[cfg(target_os = "macos")]
+pub fn hide_ai_glow_effect() {
+    ffi::hideAIGlowEffect();
 }

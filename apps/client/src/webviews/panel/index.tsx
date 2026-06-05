@@ -16,7 +16,12 @@ export default function PanelWindow({ panelId }: { panelId: string }) {
           They do not lose focus of the main window.
         </p>
 
-        <div className="w-full flex items-center justify-center gap-2 text-white text-xs">
+        <div className="m-5 flex flex-col items-center justify-center gap-2 text-white text-xs">
+          {panelId === "apple-intelligence" ? (
+            <p className="px-2 text-center rounded-2xl block text-xl bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              The borderglow you see here is created using SwiftUI
+            </p>
+          ) : null}
           <button
             onClick={handleClosePanel}
             className="bg-blue-600 px-4 py-1 rounded-md text-xs w-fit"

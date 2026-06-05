@@ -21,6 +21,14 @@ class TrayPopoverDelegateHandler: NSObject, NSPopoverDelegate {
     func popoverDidClose(_ notification: Notification) {
         tray_popover_event(.Closed)
     }
+
+    func popoverShouldClose(_ popover: NSPopover) -> Bool {
+        if let controller = popover.contentViewController {
+            controller.view.isHidden = false
+            controller.view.alphaValue = 1.0
+        }
+        return true
+    }
 }
 
 public func initTrayPopoverManager(
@@ -34,25 +42,45 @@ public func initTrayPopoverManager(
         let button = Unmanaged<NSStatusBarButton>.fromOpaque(containers.button)
             .takeUnretainedValue()
 
-        guard let contentView = window.contentView else { return }
-        contentView.wantsLayer = true
-        contentView.layer?.backgroundColor = NSColor.clear.cgColor
+        guard let stolenView = window.contentView else { return }
+
+        stolenView.wantsLayer = true
+        stolenView.layer?.backgroundColor = NSColor.clear.cgColor
 
         let placeholderView = NSView(frame: .zero)
         window.contentView = placeholderView
         window.orderOut(nil)
 
+        let targetSize = window.frame.size
+
+        let hostingContainerView = NSView(frame: NSRect(origin: .zero, size: targetSize))
+        hostingContainerView.wantsLayer = true
+        hostingContainerView.autoresizingMask = [.width, .height]
+
+        let visualEffectView = NSVisualEffectView(frame: hostingContainerView.bounds)
+        visualEffectView.autoresizingMask = [.width, .height]
+        visualEffectView.material = .popover
+        visualEffectView.blendingMode = .withinWindow
+        visualEffectView.state = .active
+        visualEffectView.wantsLayer = true
+
+        stolenView.frame = visualEffectView.bounds
+        stolenView.autoresizingMask = [.width, .height]
+
+        visualEffectView.addSubview(stolenView)
+        hostingContainerView.addSubview(visualEffectView)
+
         let viewController = NSViewController()
-        viewController.view = contentView
+        viewController.view = hostingContainerView
 
         let popover = NSPopover()
         popover.behavior = .transient
         popover.contentViewController = viewController
-        popover.contentSize = window.frame.size
-        
+        popover.contentSize = targetSize
+
         let delegate = TrayPopoverDelegateHandler()
         popover.delegate = delegate
-        
+
         TrayPopoverStorage.popover = popover
         TrayPopoverStorage.statusButton = button
         TrayPopoverStorage.delegate = delegate
@@ -62,7 +90,7 @@ public func initTrayPopoverManager(
 public func openTrayPopover() {
     DispatchQueue.main.async {
         guard let popover = TrayPopoverStorage.popover,
-              let button = TrayPopoverStorage.statusButton
+            let button = TrayPopoverStorage.statusButton
         else { return }
 
         if !popover.isShown {

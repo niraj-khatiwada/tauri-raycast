@@ -55,6 +55,8 @@ pub fn run() {
             commands::open_tray_popover,
             commands::close_tray_popover,
             commands::is_tray_popover_visible,
+            commands::show_ai_glow_effect,
+            commands::hide_ai_glow_effect,
             commands::focus_or_create_main_window,
             commands::quit_app
         ])
